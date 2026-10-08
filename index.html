@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cerise</title>
+<meta name="description" content="An app for couples. You each answer cards on your own, and your partner sees only the matches.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cerise">
+<meta property="og:title" content="Cerise">
+<meta property="og:description" content="You each answer cards on your own, and your partner sees only the matches: cards you both answered “Yes” or “Maybe”.">
+<meta property="og:url" content="https://sergeyafin3-a11y.github.io/cerise-site/">
+<meta property="og:image" content="https://sergeyafin3-a11y.github.io/cerise-site/screens/matches-en.jpg">
+<meta property="og:image:width" content="718">
+<meta property="og:image:height" content="1560">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://sergeyafin3-a11y.github.io/cerise-site/">
+<meta name="theme-color" content="#0b0012">
+<link rel="preload" href="fonts/pangolin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Главная Cerise: одна колонка по центру. Заголовок, значки магазинов, три
+   экрана, три строки пользы, вопросы и ответы. Больше ничего.
+   Шрифт заголовков свой (/fonts), внешних адресов нет: адрес посетителя
+   никуда не уходит. Тексты — в словаре T внизу страницы; английский
+   продублирован в разметке для поиска и для тех, у кого не работает скрипт. */
+@font-face { font-family: 'Pangolin'; src: url('fonts/pangolin.woff2') format('woff2'); font-display: swap; }
+:root {
+  --deep: #0b0012;
+  --plum: #1b0a29;
+  --linen: #f5e9e2;
+  --muted: rgba(245, 233, 226, 0.7);
+  --line: rgba(245, 233, 226, 0.16);
+  --lobster: #d44d5c;
+  --bubble: #fa9db0;
+  --f-display: 'Pangolin', 'Comic Sans MS', cursive, sans-serif;
+  --f-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--deep); color: var(--linen); font: 400 17px/1.6 var(--f-ui); -webkit-font-smoothing: antialiased; padding-inline: 20px; }
+a { color: var(--bubble); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--bubble); outline-offset: 3px; }
+.wrap { max-width: 980px; margin-inline: auto; }
+h1, h2 { font-family: var(--f-display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(40px, 7.5vw, 72px); line-height: 1.04; }
+h2 { font-size: clamp(30px, 4.5vw, 40px); line-height: 1.12; }
+p { margin: 0; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; }
+.mark { font: 400 30px/1 var(--f-display); }
+.mark i { color: var(--lobster); font-style: normal; }
+.top-r { display: flex; align-items: center; gap: 12px; }
+.age { font: 800 12px/1 var(--f-ui); border: 1.5px solid var(--bubble); color: var(--bubble); border-radius: 999px; padding: 6px 9px; }
+.lang { background: none; color: var(--linen); border: 1px solid var(--line); border-radius: 999px; font: 600 13px/1 var(--f-ui); padding: 8px 12px; cursor: pointer; }
+.lang:hover { border-color: var(--bubble); }
+
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; padding-block: 40px 20px; }
+.hero p.lead { color: var(--muted); font-size: 19px; max-width: 34em; }
+.stores { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.badge { display: inline-block; line-height: 0; cursor: default; } /* пока не ссылка: приложения в магазинах ещё не видно */
+.badge img { height: 48px; width: auto; }
+.badge.play img { height: 63px; margin-block: -7px; } /* в PNG Google есть поля вокруг значка */
+html[lang="en"] .badge.play img { height: 72px; margin-block: -12px; } /* у английского поля другие */
+.note { font-size: 14px; color: var(--muted); }
+
+.shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding-block: 36px 24px; }
+.shots img { width: 100%; height: auto; border-radius: 22px; display: block; }
+
+.points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; padding-block: 56px; border-top: 1px solid var(--line); }
+.points div { display: flex; flex-direction: column; gap: 10px; }
+.points h2 { font-size: 24px; line-height: 1.2; }
+.points p { color: var(--muted); font-size: 16px; }
+
+.faq { padding-block: 24px 64px; max-width: 720px; margin-inline: auto; }
+.faq h2 { margin-bottom: 20px; text-align: center; }
+details { border-top: 1px solid var(--line); }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; padding: 18px 28px 18px 0; font-weight: 600; list-style: none; position: relative; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; position: absolute; right: 4px; top: 16px; font: 400 24px/1 var(--f-ui); color: var(--bubble); }
+details[open] summary::after { content: '–'; }
+details p { color: var(--muted); padding: 0 28px 20px 0; }
+
+footer { border-top: 1px solid var(--line); padding-block: 40px 56px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; font-size: 14px; color: var(--muted); }
+footer nav { display: flex; flex-wrap: wrap; gap: 8px 22px; justify-content: center; }
+
+/* проверка возраста: закрывает сайт, пока человек не ответил */
+.gate { position: fixed; inset: 0; z-index: 50; background: var(--deep); display: flex; padding: 24px; overflow-y: auto; } /* margin:auto у .gate-in центрирует и не отрезает верх на низком экране */
+.gate[hidden], .gate-in[hidden] { display: none; }
+.gate-in { max-width: 460px; width: 100%; margin: auto; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center; }
+.gate-in [tabindex="-1"]:focus, #page [tabindex="-1"]:focus { outline: none; }
+.gate .mark { font-size: 40px; }
+.gate p { color: var(--muted); }
+.gate .sorry { color: var(--bubble); font-size: 17px; }
+.gate-btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%; }
+.gate-btns button { flex: 1 1 180px; font: 800 17px/1 var(--f-ui); border-radius: 999px; padding: 17px 22px; cursor: pointer; background: transparent; color: var(--linen); border: 2px solid var(--linen); }
+.gate-btns button:hover { background: var(--linen); color: var(--deep); }
+.gate .lang { position: absolute; top: 18px; right: 18px; }
+
+@media (max-width: 760px) {
+  .shots { grid-template-columns: 1fr; max-width: 340px; margin-inline: auto; }
+  .points { grid-template-columns: 1fr; gap: 28px; padding-block: 40px; }
+  .hero { padding-top: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) { .lang { transition: border-color 0.2s; } }
+</style>
+<script>
+// Язык выбирается до отрисовки: картинки подставляются уже на нём, и ни одна
+// не качается дважды. ?lang=ru и ?lang=en перекрывают язык браузера.
+(function () {
+  var asked = /[?&]lang=(en|ru)\b/.exec(location.search);
+  var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+  document.documentElement.lang = asked ? asked[1] : /^ru\b/i.test(langs[0]) ? 'ru' : 'en';
+})();
+</script>
+</head>
+<body>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <button class="lang" type="button" data-lang aria-label="Language">EN / RU</button>
+  <div class="gate-in" id="gate-ask">
+    <div class="mark">Cerise<i>.</i></div>
+    <h1 id="gate-t" style="font-size:clamp(34px,8vw,48px)" data-i="gate_t">Are you 18 or older?</h1>
+    <p data-i="gate_p">Cerise is an app for adult couples. This site talks about intimacy, so it is open to adults only.</p>
+    <div class="gate-btns">
+      <button type="button" id="yes18" data-i="gate_yes">I am 18 or older</button>
+      <button type="button" id="no18" data-i="gate_no">I am under 18</button>
+    </div>
+    <noscript><p class="sorry">Включите JavaScript, чтобы войти. / Turn on JavaScript to enter.</p></noscript>
+  </div>
+  <div class="gate-in" id="gate-no" hidden>
+    <div class="mark">Cerise<i>.</i></div>
+    <p class="sorry" id="sorry" data-i="gate_sorry" role="status" tabindex="-1">This site is for adults only. Come back when you turn 18.</p>
+  </div>
+</div>
+
+<div class="wrap" id="page">
+  <header class="top">
+    <div class="mark">Cerise<i>.</i></div>
+    <div class="top-r">
+      <span class="age">18+</span>
+      <button class="lang" type="button" data-lang aria-label="Language">EN / RU</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 data-i="hero_h" tabindex="-1">Find out what you both like</h1>
+      <p class="lead" data-i="hero_p">You each answer cards on your own, and your partner sees only the matches: cards you both answered “Yes” or “Maybe”.</p>
+      <div class="stores">
+        <span class="badge" data-store="apple"><img data-ru="badges/appstore-ru.svg" data-en="badges/appstore-en.svg" alt="Download on the App Store" width="144" height="48"></span>
+        <span class="badge play" data-store="play"><img data-ru="badges/googleplay-ru.png" data-en="badges/googleplay-en.png" alt="Get it on Google Play" width="160" height="62"></span>
+      </div>
+      <p class="note" data-i="note">For iPhone and Android. Adults only, 18+.</p>
+    </section>
+
+    <div class="shots">
+      <img data-ru="screens/compass-ru.jpg" data-en="screens/compass-en.jpg" alt="A Cerise app screen" width="718" height="1560">
+      <img data-ru="screens/matches-ru.jpg" data-en="screens/matches-en.jpg" alt="A Cerise app screen" width="718" height="1560">
+      <img data-ru="screens/never-ru.jpg" data-en="screens/never-en.jpg" alt="A Cerise app screen" width="718" height="1560">
+    </div>
+
+    <section class="points">
+      <div><h2 data-i="p1_h">Answer on your own</h2><p data-i="p1_p">“Yes”, “Maybe” or “Never”. Your partner doesn’t see your Nevers.</p></div>
+      <div><h2 data-i="p2_h">See your matches</h2><p data-i="p2_p">Ideas for tonight from what you both said “Yes” or “Maybe” to.</p></div>
+      <div><h2 data-i="p3_h">Choose your heat</h2><p data-i="p3_p">Five levels, from tender to wild. You decide which ones to turn on.</p></div>
+    </section>
+
+    <section class="faq">
+      <h2 data-i="faq_h">FAQ</h2>
+      <details><summary data-i="q1">What does my partner see?</summary><p><span data-i="a1">Only matches: cards you both answered “Yes” or “Maybe”. Your partner doesn’t see your “Never” answers.</span> <a data-link="privacy" data-hash="partner" href="https://cerise-app.com/en/privacy#partner" data-i="a1_link">More: what your partner sees</a></p></details>
+      <details><summary data-i="q2">Do we both need the app?</summary><p data-i="a2">Yes. One of you sends an invite link or a six-character code, and the other enters it.</p></details>
+      <details><summary data-i="q3">Does it work on iPhone and Android?</summary><p data-i="a3">Yes. Your partner can use a different phone.</p></details>
+      <details><summary data-i="q4">How much does it cost?</summary><p data-i="a4">It is free to download. Some features need a subscription.</p></details>
+      <details><summary data-i="q5">Who is it for?</summary><p data-i="a5">Adult couples, 18+.</p></details>
+      <details><summary data-i="q6">How do I delete my account?</summary><p><span data-i="a6">In the app: Settings, then Account and data.</span> <a data-link="delete" href="https://cerise-app.com/en/delete" data-i="a6_link">Account deletion page</a></p></details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="stores">
+      <span class="badge" data-store="apple"><img data-ru="badges/appstore-ru.svg" data-en="badges/appstore-en.svg" alt="Download on the App Store" width="144" height="48"></span>
+      <span class="badge play" data-store="play"><img data-ru="badges/googleplay-ru.png" data-en="badges/googleplay-en.png" alt="Get it on Google Play" width="160" height="62"></span>
+    </div>
+    <nav>
+      <a data-link="privacy" href="https://cerise-app.com/en/privacy" data-i="f_privacy">Privacy Policy</a>
+      <a data-link="terms" href="https://cerise-app.com/en/terms" data-i="f_terms">Terms of Use</a>
+      <a data-link="faq" href="https://cerise-app.com/en/faq" data-i="f_faq">FAQ</a>
+      <a data-link="delete" href="https://cerise-app.com/en/delete" data-i="f_delete">Deleting your account</a>
+    </nav>
+    <p><span data-i="f_mail">Contact:</span> <a href="mailto:hello@cerise-app.com">hello@cerise-app.com</a></p>
+    <p>© 2026 Cerise</p>
+  </footer>
+</div>
+
+<script type="application/json" id="T">
+{
+  "ru": {
+    "gate_t": "Вам есть 18 лет?",
+    "gate_p": "Cerise — приложение для взрослых пар. На сайте говорится о близости, поэтому он открыт только с 18 лет.",
+    "gate_yes": "Мне есть 18",
+    "gate_no": "Мне нет 18",
+    "gate_sorry": "Этот сайт только для взрослых. Возвращайтесь, когда вам исполнится 18.",
+    "hero_h": "Узнайте, что вам обоим нравится",
+    "hero_p": "Вы отвечаете на карточки отдельно друг от друга, а партнёр видит только совпадения: карточки, где вы оба ответили «Да» или «Может быть».",
+    "note": "Для iPhone и Android. Только для взрослых, 18+.",
+    "p1_h": "Отвечайте по отдельности",
+    "p1_p": "«Да», «Может быть» или «Никогда». Партнёр не видит ваши «Никогда».",
+    "p2_h": "Смотрите совпадения",
+    "p2_p": "Идеи на вечер из того, чему вы оба сказали «Да» или «Может быть».",
+    "p3_h": "Выбирайте жар",
+    "p3_p": "Пять уровней, от нежного до дикого. Вы сами решаете, какие включить.",
+    "faq_h": "Частые вопросы",
+    "q1": "Что видит мой партнёр?",
+    "a1": "Только совпадения: карточки, где вы оба ответили «Да» или «Может быть». Ваши ответы «Никогда» он не видит.",
+    "q2": "Нужно ли обоим ставить приложение?",
+    "a2": "Да. Один присылает приглашение ссылкой или кодом из шести знаков, второй вводит его у себя.",
+    "q3": "Оно работает на iPhone и на Android?",
+    "a3": "Да. Партнёр может пользоваться другим телефоном.",
+    "q4": "Сколько это стоит?",
+    "a4": "Скачать можно бесплатно. Часть возможностей открывается по подписке.",
+    "q5": "Для кого это?",
+    "a5": "Для взрослых пар, 18+.",
+    "q6": "Как удалить аккаунт?",
+    "a6": "В приложении: «Настройки», затем «Аккаунт и данные».",
+    "a6_link": "Страница удаления аккаунта",
+    "f_privacy": "Политика приватности",
+    "f_terms": "Условия",
+    "f_faq": "Частые вопросы",
+    "f_delete": "Удаление аккаунта",
+    "f_mail": "Связь:",
+    "alt_apple": "Скачать в App Store",
+    "alt_play": "Скачать из Google Play",
+    "a1_link": "Подробнее: что видит партнёр",
+    "lang_label": "Язык",
+    "alt_s1": "Экран с карточкой и тремя ответами: «Да», «Может быть», «Никогда»",
+    "alt_s2": "Экран «Совпадения»: карточки, на которые вы оба ответили «Да» или «Может быть»",
+    "alt_s3": "Ответ «Никогда»: партнёр его не видит"
+  },
+  "en": {
+    "gate_t": "Are you 18 or older?",
+    "gate_p": "Cerise is an app for adult couples. This site talks about intimacy, so it is open to adults only.",
+    "gate_yes": "I am 18 or older",
+    "gate_no": "I am under 18",
+    "gate_sorry": "This site is for adults only. Come back when you turn 18.",
+    "hero_h": "Find out what you both like",
+    "hero_p": "You each answer cards on your own, and your partner sees only the matches: cards you both answered “Yes” or “Maybe”.",
+    "note": "For iPhone and Android. Adults only, 18+.",
+    "p1_h": "Answer on your own",
+    "p1_p": "“Yes”, “Maybe” or “Never”. Your partner doesn’t see your Nevers.",
+    "p2_h": "See your matches",
+    "p2_p": "Ideas for tonight from what you both said “Yes” or “Maybe” to.",
+    "p3_h": "Choose your heat",
+    "p3_p": "Five levels, from tender to wild. You decide which ones to turn on.",
+    "faq_h": "FAQ",
+    "q1": "What does my partner see?",
+    "a1": "Only matches: cards you both answered “Yes” or “Maybe”. Your partner doesn’t see your “Never” answers.",
+    "q2": "Do we both need the app?",
+    "a2": "Yes. One of you sends an invite link or a six-character code, and the other enters it.",
+    "q3": "Does it work on iPhone and Android?",
+    "a3": "Yes. Your partner can use a different phone.",
+    "q4": "How much does it cost?",
+    "a4": "It is free to download. Some features need a subscription.",
+    "q5": "Who is it for?",
+    "a5": "Adult couples, 18+.",
+    "q6": "How do I delete my account?",
+    "a6": "In the app: Settings, then Account and data.",
+    "a6_link": "Account deletion page",
+    "f_privacy": "Privacy Policy",
+    "f_terms": "Terms of Use",
+    "f_faq": "FAQ",
+    "f_delete": "Deleting your account",
+    "f_mail": "Contact:",
+    "alt_apple": "Download on the App Store",
+    "alt_play": "Get it on Google Play",
+    "a1_link": "More: what your partner sees",
+    "lang_label": "Language",
+    "alt_s1": "A card with three answers: “Yes”, “Maybe”, “Never”",
+    "alt_s2": "The Matches screen: cards you both answered “Yes” or “Maybe”",
+    "alt_s3": "A “Never” answer: your partner doesn’t see it"
+  }
+}
+</script>
+<script>
+(function () {
+  // Тексты — в блоке T выше: новый язык — новый раздел с теми же ключами.
+  var T = JSON.parse(document.getElementById('T').textContent);
+  // Страницы документов: русские в корне, английские под /en.
+  var DOCS = { ru: { privacy: 'https://cerise-app.com/privacy', terms: 'https://cerise-app.com/terms', faq: 'https://cerise-app.com/faq', delete: 'https://cerise-app.com/delete' }, en: { privacy: 'https://cerise-app.com/en/privacy', terms: 'https://cerise-app.com/en/terms', faq: 'https://cerise-app.com/en/faq', delete: 'https://cerise-app.com/en/delete' } };
+  var root = document.documentElement, lang = 'en';
+
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+  function apply(l) {
+    lang = l; root.lang = l;
+    var t = T[l];
+    each('[data-i]', function (el) { el.textContent = t[el.getAttribute('data-i')]; });
+    each('[data-link]', function (el) { var h = el.getAttribute('data-hash'); el.href = DOCS[l][el.getAttribute('data-link')] + (h ? '#' + h : ''); });
+    each('img[data-ru]', function (el) { el.src = el.getAttribute('data-' + l); });
+    each('[data-store="apple"] img', function (el) { el.alt = t.alt_apple; });
+    each('[data-store="play"] img', function (el) { el.alt = t.alt_play; });
+    each('.shots img', function (el, i) { el.alt = t['alt_s' + (i + 1)]; });
+    each('[data-lang]', function (el) { el.setAttribute('aria-label', t.lang_label); });
+  }
+  apply(root.lang === 'ru' ? 'ru' : 'en');
+  each('[data-lang]', function (b) { b.addEventListener('click', function () { apply(lang === 'ru' ? 'en' : 'ru'); }); });
+
+  // Проверка возраста. «Нет» ничего не запоминает; «Да» — только до закрытия вкладки.
+  var gate = document.getElementById('gate'), page = document.getElementById('page');
+  function openPage(focus) { gate.hidden = true; page.inert = false; page.removeAttribute('aria-hidden'); if (focus) { document.querySelector('main h1').focus(); } }
+  function lockPage() { gate.hidden = false; page.inert = true; page.setAttribute('aria-hidden', 'true'); document.getElementById('yes18').focus(); }
+  var known = false;
+  try { known = sessionStorage.getItem('cerise-18') === '1'; } catch (e) {}
+  if (known) { openPage(); } else { lockPage(); }
+  document.getElementById('yes18').addEventListener('click', function () {
+    try { sessionStorage.setItem('cerise-18', '1'); } catch (e) {}
+    openPage(true); window.scrollTo(0, 0);
+  });
+  document.getElementById('no18').addEventListener('click', function () {
+    document.getElementById('gate-ask').hidden = true;
+    document.getElementById('gate-no').hidden = false;
+    document.getElementById('sorry').focus();
+  });
+})();
+</script>
+</body>
+</html>
